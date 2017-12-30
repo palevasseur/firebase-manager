@@ -5,6 +5,7 @@
   "main": "index.html",
   "scripts": {
     "build": "webpack --display-error-details",
+    "start": "webpack-dev-server --open",
     "watch": "webpack --watch"
   },
   "keywords": [],
@@ -20,6 +21,7 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
   }
 }
