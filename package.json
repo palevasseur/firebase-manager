@@ -5,8 +5,7 @@
   "main": "index.html",
   "scripts": {
     "build": "webpack --display-error-details",
-    "start": "webpack-dev-server --open",
-    "watch": "webpack --watch"
+    "start": "webpack-dev-server --open"
   },
   "keywords": [],
   "author": "",
