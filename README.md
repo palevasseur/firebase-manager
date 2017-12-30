@@ -5,6 +5,8 @@ App from scratch with stack:
 - firebase
 
 # usage
+npm install
+
 npm run build
 
 open ./dist/index.html in the brower
