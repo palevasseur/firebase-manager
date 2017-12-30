@@ -1,5 +1,8 @@
 # firebase-manager
-app from scratch with webpack, react and firebase
+App from scratch with stack:
+- webpack
+- react / babel
+- firebase
 
 # usage
 npm run build
