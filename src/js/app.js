@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import FormContainer from "./components/container/FormContainer";
+import FirebaseBackup from "./FirebaseBackup";
 
-const wrapper = document.getElementById("create-article-form");
-wrapper ? ReactDOM.render(<FormContainer />, wrapper) : false;
+const wrapper = document.getElementById("firebase-backup");
+wrapper ? ReactDOM.render(<FirebaseBackup />, wrapper) : false;
+

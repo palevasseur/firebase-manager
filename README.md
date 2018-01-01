@@ -4,9 +4,7 @@ App from scratch with stack:
 - react / babel
 - firebase
 
-# usage
+# development
 npm install
 
-npm run build
-
-open ./dist/index.html in the brower
+npm start
