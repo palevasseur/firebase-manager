@@ -1,62 +1,79 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import axios from "axios"
-
-const httpDataHeures = 'https://project-3010963349219589577.firebaseio.com/.json';
-const httpDataNotes = 'https://notes-6f837.firebaseio.com/.json';
 
 class FirebaseBackup extends Component {
 
-  constructor() {
+  constructor(params) {
     super();
 
+    this.dbConfig = params.config;
+    this.dbName = params.name;
     this.state = {
-      dataHeures: '',
-      dataNotes: ''
+      data: '',
+      result: 'Not launched'
     };
 
     this.handleBackup = this.handleBackup.bind(this);
   }
 
   handleBackup(e) {
-    const self = this;
+    var app = firebase.initializeApp(this.dbConfig);
+    var auth = firebase.auth();
+    var self = this;
+    auth.onAuthStateChanged(function (state) {
+      console.log('state=', state);
+      if(state) {
+        self.setState({result: 'Reading data...'});
+        let fileName = (new Date()).toISOString().split('T')[0] + ' - sav project ' + self.dbName + '.json';
 
-    axios.get(httpDataHeures)
-      .then(function (response) {
-        self.setState({
-          dataHeures: JSON.stringify(response.data, null, 2)
+        // get root data ref
+        var rootRef = firebase.database().ref();
+
+        // get root value
+        rootRef.off(); // ensure no listener
+        rootRef.on('value', function(data) {
+          console.log('data=', data.val());
+          self.setState({result: 'Saving backup...'});
+          self.setState({data: JSON.stringify(data.val(), null, 2)});
+
+          // save backup file (will overwrite if same name exist)
+          var storageRef = firebase.storage().ref();
+          var testRef = storageRef.child(fileName);
+          testRef.putString(JSON.stringify(data.val(), null, 2)).then(function(snapshot) {
+            if(snapshot.state === 'success') {
+              self.setState({result: 'Created new backup "' + fileName + '"'});
+            }
+            else {
+              self.setState({result: 'Backup failed !'});
+            }
+
+            // disconnect db
+            app.delete()
+              .then(function() {
+                console.log("App deleted successfully");
+              })
+              .catch(function(error) {
+                console.log("Error deleting app:", error);
+              });
+          });
         });
-      })
-      .catch(function (error) {
-      self.setState({
-        dataNotes: JSON.stringify(error.response.data)
-      });
+      }
+      else {
+        self.setState({result: 'Not logged, logging...'});
+        var provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider);
+      }
     });
 
-    axios.get(httpDataNotes)
-      .then(function (response) {
-        self.setState({
-          dataNotes: JSON.stringify(response.data, null, 2)
-        });
-      })
-      .catch(function (error) {
-        self.setState({
-          dataNotes: JSON.stringify(error.response.data)
-        });
-      });
   }
 
   render() {
     return (
       <div>
-        <h3>Projects</h3>
-        <div>Heures = {httpDataHeures}</div>
-        <pre style={{height:'150px', overflowY: 'auto'}}>{this.state.dataHeures}</pre>
+        <h4>{this.dbName}</h4>
+        <button type="button" className="btn btn-outline-dark" onClick={this.handleBackup}>Backup data</button>
         <br/>
-        <div>Notes = {httpDataNotes}</div>
-        <pre style={{height:'150px', overflowY: 'auto'}}>{this.state.dataNotes}</pre>
-        <br/>
-        <button type="button" className="btn btn-outline-dark" onClick={this.handleBackup}>Backup all projects</button>
+        Status: {this.state.result}
+        <pre style={{height:'150px', overflowY: 'auto'}}>{this.state.data}</pre>
       </div>
     );
   }
