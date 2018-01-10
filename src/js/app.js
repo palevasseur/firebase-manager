@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import FirebaseBackup from "./FirebaseBackup";
 
 const wrapper = document.getElementById("firebase-backup");
+// note: for each db, need to authorize domain "fb-manager-8ba44.firebaseapp.com" to access data
 wrapper ? ReactDOM.render(
   <div>
     <FirebaseBackup name="notes" config={{
